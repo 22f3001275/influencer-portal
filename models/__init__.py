@@ -1,8 +1,13 @@
+from app import bcrypt, login_manager
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from flask_login import UserMixin
 from typing import List
-from app import bcrypt
+from db import session
+
+@login_manager.user_loader
+def load_user(user_id):
+    return session.query(User).get(int(user_id))
 
 class Base(DeclarativeBase):
     pass
@@ -37,13 +42,24 @@ class User(Base, UserMixin):
     @property
     def role(self):
         return self.role
-    
+
     @role.setter
-    def role(self,role):
+    def role(self, role):
         if role == 'influencer':
-            self.is_influencer=True
-        if role =='sponsor':
-            self.is_sponsor=True
+            self.is_influencer = True
+        if role == 'sponsor':
+            self.is_sponsor = True
+
+    @property
+    def current_role(self):
+        return self.role
+
+    @role.setter
+    def current_role(self, role):
+        self.currently_logged_in_as= (role == 'sponsor')
+    
+    def is_password_correct(self,entered_password):
+        return bcrypt.check_password_hash(self.password_hash,entered_password)
 
 
 class Sponsor(Base):

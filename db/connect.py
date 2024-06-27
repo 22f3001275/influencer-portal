@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, text
-from models import Base
+# from models import Base
 
 engine = create_engine('sqlite:///main.db', echo=True)
 

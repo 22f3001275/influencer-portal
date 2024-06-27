@@ -57,37 +57,61 @@
 				</li>
 			</ul>
 
+			{%if current_user.is_authenticated %} 
+				{%if current_user.is_sponsor%} 
+					{% if current_user.currently_logged_in_as == False %}
+					<ul class="navbar-nav disabled">
+						<li class="float-end">
+							<a class="nav-link" href="#">Switch to Sponsor</a>
+						</li>
+					</ul>
 
-			<ul class="navbar-nav">
-				<li>
-					<a class="nav-link" href="{{url_for('login_page')}}">Login</a>
-				</li>
-				<li>
-					<a class="nav-link" href="{{url_for('register_page')}}">Register</a>
-				</li>
-			</ul>
-
-         <ul class="navbar-nav disabled">
+					{%endif%}
+			{%else%}
+				<ul class="navbar-nav disabled">
+					<li class="float-end">
+						<a class="nav-link" href="#">Become an Sponsor</a>
+					</li>
+				</ul>
+			{%endif%} 
+			{%if current_user.is_influencer %} 
+			{% if current_user.currently_logged_in_as%}
+			<ul class="navbar-nav disabled">
 				<li class="float-end">
 					<a class="nav-link" href="#">Switch to Influencer</a>
 				</li>
 			</ul>
-
-         <ul class="navbar-nav disabled">
+			{%endif%} 
+			{%else%}
+			<ul class="navbar-nav disabled">
 				<li class="float-end">
 					<a class="nav-link" href="#">Become an Influencer</a>
 				</li>
 			</ul>
 
-
-
-
 			<ul class="navbar-nav">
 				<li class="float-end">
-					<a class="nav-link" href="/logout">Logout</a>
+					<a class="nav-link" href="{{url_for('logout_page')}}"
+						>Logout</a
+					>
 				</li>
 			</ul>
+			{%endif%} 
+			{%else%}
 
+			<ul class="navbar-nav">
+				<li>
+					<a class="nav-link" href="{{url_for('login_page')}}"
+						>Login</a
+					>
+				</li>
+				<li>
+					<a class="nav-link" href="{{url_for('register_page')}}"
+						>Register</a
+					>
+				</li>
+			</ul>
+			{%endif%}
 
 			<!-- <form class="d-flex">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
