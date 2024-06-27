@@ -1,19 +1,21 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField,SelectField
-from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError
-
-
+from wtforms import StringField, SubmitField,SelectField, IntegerField
+from wtforms.validators import  DataRequired, ValidationError
 
 class CompleteRegInf(FlaskForm):
 
-    username = StringField(label='User Name', validators=[
-                           Length(min=4, max=30), DataRequired()])
-    password = PasswordField(label='Password', validators=[
-        Length(min=6), DataRequired()])
-    Category=SelectField('Select User Type',choices=[
-        ('youtube','Youtube'),
-        ('instagram', 'Instagram'),
-        ('x', 'X, formely Twitter'),
+    category = SelectField('Select you Presence', choices=[
+        ('Youtube', 'Youtube'),
+        ('Instagram', 'Instagram'),
+        ('X Platform', 'X Platform'),
 
-        ])
-    submit = SubmitField('Login')
+    ])
+    niche = SelectField('Select your Niche', choices=[
+        ('Technology', 'Technology'),
+        ('Others', 'Others'),
+
+    ])
+    reach = IntegerField(label='Enter your Approximate Reach', validators=[
+        DataRequired()])
+
+    submit = SubmitField('Complete Registration')

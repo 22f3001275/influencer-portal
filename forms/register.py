@@ -33,6 +33,6 @@ class RegisterForm(FlaskForm):
     register_as = SelectField('Select User Type', choices=[
         ('influencer', 'Influencer'),
         ('sponsor', 'Sponsor'),
-        ('admin', 'Admin'),
+        # ('admin', 'Admin'),
     ])
     submit = SubmitField('Submit')

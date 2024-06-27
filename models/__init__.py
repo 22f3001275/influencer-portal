@@ -4,6 +4,7 @@ from sqlalchemy import ForeignKey
 from flask_login import UserMixin
 from typing import List
 from db import session
+from db import engine
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -68,8 +69,10 @@ class Sponsor(Base):
     sponsor_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     user: Mapped['User'] = relationship(back_populates='sponsor')
     sponsor_type: Mapped[str] = mapped_column(
-        nullable=False, default='Individual')
-
+        nullable=False, default='individual')
+    industry: Mapped[str] = mapped_column(
+        nullable=False, default='others')
+    
 
 class Influencer(Base):
     __tablename__ = 'influencers'
@@ -80,22 +83,37 @@ class Influencer(Base):
     niche: Mapped[str] = mapped_column(nullable=False)
     reach: Mapped[int] = mapped_column(nullable=False, default=1)
 
+    rating: Mapped[int] = mapped_column(nullable=False, default=5)
+    finished_campaigns:Mapped[int] = mapped_column(nullable=False, default=0)
 
-class Ad_Request(Base):  # Sent by Sponsor
+
+    active_campaigns: Mapped[List['Campaign']] = relationship(
+        back_populates='assigned_to')
+    
+    ad_requests: Mapped[List['AdRequest']] = relationship(
+        back_populates='influencer')
+
+
+
+class AdRequest(Base):  # Sent by Sponsor
     __tablename__ = 'ad_requests'
     id: Mapped[int] = mapped_column(primary_key=True)
 
     campaign_id: Mapped[int] = mapped_column(ForeignKey('campaigns.id'))
     campaign: Mapped['Campaign'] = relationship(back_populates='ad_requests')
 
-    influencer_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    influencer_id: Mapped[int] = mapped_column(ForeignKey('influencers.id'))
+    influencer: Mapped['Influencer'] = relationship(
+        back_populates='ad_requests')
+    
+
     messages: Mapped[str] = mapped_column(nullable=False)
     requirements: Mapped[str]
     payment_amount: Mapped[int] = mapped_column(nullable=False, default=0)
     status: Mapped[str] = mapped_column(nullable=False, default='Pending')
 
 
-class Campaign_Request(Base):  # Sent by Influencer
+class CampaignRequest(Base):  # Sent by Influencer
     __tablename__ = 'campaign_requests'
     id: Mapped[int] = mapped_column(primary_key=True)
 
@@ -114,10 +132,10 @@ class Campaign(Base):
     __tablename__ = 'campaigns'
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    ad_requests: Mapped[List['Ad_Request']] = relationship(
+    ad_requests: Mapped[List['AdRequest']] = relationship(
         back_populates='campaign')
 
-    campaign_requests: Mapped[List['Campaign_Request']] = relationship(
+    campaign_requests: Mapped[List['CampaignRequest']] = relationship(
         back_populates='campaign')
 
     sponsor_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
@@ -132,4 +150,17 @@ class Campaign(Base):
     visibility: Mapped[bool] = mapped_column(
         nullable=False, default=True)  # False - Private
     # True - Public
+
     goals: Mapped[str]
+
+    category: Mapped[str] = mapped_column(nullable=False)
+    progress: Mapped[int] = mapped_column(nullable=False,default=0)
+
+    # is_active:Mapped[bool] = mapped_column(nullable=False, default=False)
+    influencer_id:Mapped[int] = mapped_column(ForeignKey('influencers.id'))
+    assigned_to:Mapped['Influencer'] = relationship(
+        back_populates='active_campaigns')
+
+
+
+Base.metadata.create_all(engine)

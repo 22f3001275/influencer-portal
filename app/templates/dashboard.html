@@ -1,1 +1,156 @@
-{% extends 'base.html'%}
+{% extends 'base.html'%} {% block title %}Dashboard{% endblock %} {% block
+content %} {% if current_user.is_sponsor or current_user.is_influencer %}
+<div class="container mt-4">
+	<div id="admin"></div>
+
+	<div id="influencer">
+		<div class="row gx-md-5">
+			<div class="col-12 col-md-4">
+				<img
+					src="/static/img/profile.jpg"
+					alt="Profile Pic"
+					class="w-100 rounded rounded-circle"
+				/>
+				<h3 class="text-center mt-2">
+					<strong class="text-success">Username: </strong>
+					{{current_user.username}}
+				</h3>
+				<h3 class="text-center mt-2">
+					<strong class="text-success">Rating: </strong>
+					{{current_user.influencer.rating}}
+				</h3>
+				<h3 class="text-center mt-2">
+					<strong class="text-success">Total Earning: </strong>
+					{{current_user.earning}} $
+				</h3>
+				<h5 class="text-center mt-2">
+					<strong class="text-success">Completed Campaigns: </strong>
+					{{current_user.finished_campaigns}}
+				</h5>
+				<h5 class="text-center mt-2">
+					<strong class="text-success">Industry: </strong>
+					{{current_user.influencer.industry}}
+				</h5>
+				<h5 class="text-center mt-2">
+					<strong class="text-success">Reach: </strong>
+					{{current_user.influencer.reach}}
+				</h5>
+				<h5 class="text-center mt-2">
+					<strong class="text-success">Platform: </strong>
+					{{current_user.influencer.category}}
+				</h5>
+			</div>
+			<div class="col-12 col-md-8">
+				<div class="row">
+					<h2 class="col-12 col-md-8">
+						Welcome {{current_user.name}}
+					</h2>
+					<a class="col-12 col-md-4 text-success" href="#"
+						>Edit Profile</a
+					>
+				</div>
+				<hr />
+				<div class="">
+					<h3 class="col-12">Campaigns</h3>
+					{% for campaign in current_user.influencer.active_campaigns
+					%}
+					<div class="card mb-2">
+						<div class="card-header">
+							{{campaign.campaign_name}}
+						</div>
+						<div class="progress" style="height: 3px">
+							<div
+								class="progress-bar bg-success"
+								role="progressbar"
+								style="width: {{campaign.progress}}%"
+								aria-valuenow="{{campaign.progress}}"
+								aria-valuemin="0"
+								aria-valuemax="100"
+							></div>
+						</div>
+						<div class="card-body">
+							<p class="card-text">
+								<b>Brand:</b> {{campaign.sponsor.name}}
+							</p>
+							<p class="card-text"><b>Platform:</b> Twitter</p>
+							<p class="card-text">
+								<b>Payment:</b> $ {{campaign.earning}}
+							</p>
+							<p class="card-text">
+								<b>Progress:</b> {{campaign.progress}}%
+							</p>
+							<td>{{campaign.earning}}</td>
+							<td><a href="">View More</a></td>
+						</div>
+					</div>
+					{%endfor%}
+					<hr />
+
+					<div class="col-12">
+						<h3 class="col-12">New Requests</h3>
+                        {% for campaign in current_user.influencer.ad_requests
+					%}
+                    {% if ad_request.status == 'Pending'%}
+						<div class="card">
+							<div class="card-header">{ad_request.campaign.name}</div>
+							<div class="card-body">
+								<h5 class="card-title">
+									{ad_request.message}
+								</h5>
+								<p class="card-text">
+									{ad_request.message}
+								</p>
+								<a href="#" class="btn btn-info"
+									>More</a
+								>
+							</div>
+						</div>
+					</div>
+                    {%endif%}
+                    {%endfor%}
+                    <!-- <hr>
+					<div class="col-12">
+						<h3 class="col-12">Your Requests</h3>
+
+						<div class="card">
+							<div class="card-header">Featured</div>
+							<div class="card-body">
+								<h5 class="card-title">
+									Special title treatment
+								</h5>
+								<p class="card-text">
+									With supporting text below as a natural
+									lead-in to additional content.
+								</p>
+								<a href="#" class="btn btn-primary"
+									>Go somewhere</a
+								>
+							</div>
+						</div>
+					</div> -->
+				</div>
+				<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+			</div>
+		</div>
+
+		<div id="sponsor"></div>
+	</div>
+
+	{%else%}
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1 class="text-center">Welcome to the Dashboard</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<p class="text-center">
+					You are not authorized to view this page
+				</p>
+			</div>
+		</div>
+	</div>
+	{%endif%} {% endblock%}
+</div>

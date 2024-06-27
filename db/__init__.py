@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, text
-# from models import Base
+# from db.connect import Base
 
 engine = create_engine('sqlite:///main.db', echo=True)
 with engine.connect() as connection:
