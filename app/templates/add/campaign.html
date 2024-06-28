@@ -1,0 +1,58 @@
+{% extends 'base.html'%}
+{% block title %}Add Campaign{% endblock %}
+{% block content %} 
+
+<div class="container col-12 col-md-6  rounded mt-4">
+	<form action="" method="POST" >
+		{{form.hidden_tag()}}
+		
+		<div class="form-floating">
+			{{form.name(class="form-control " , placeholder="Eg. suyasmishra")}}
+			{{form.name.label(class="form-label")}}
+            
+        </div>
+        <div class="form-floating mt-2">
+			{{form.description(class="form-control " , placeholder="Just an Awesome Campaign")}}
+			{{form.description.label(class="form-label")}}
+            
+        </div>
+
+        <div class="form-floating mt-2">
+			{{form.start_date(class="form-control " )}}
+			{{form.start_date.label(class="form-label")}}
+            
+        </div>
+        <div class="form-floating mt-2">
+			{{form.end_date(class="form-control ")}}
+			{{form.end_date.label(class="form-label")}}
+            
+		</div>
+        <div class="form-floating mt-2">
+			{{form.cost(class="form-control ")}}
+			{{form.cost.label(class="form-label")}}
+
+		</div>
+        <div class="form-floating mt-2">
+			{{form.visibility(class="form-select ")}}
+			{{form.visibility.label(class="form-label")}}
+
+		</div>
+        <div class="form-floating mt-2">
+			{{form.category(class="form-select ")}}
+			{{form.category.label(class="form-label")}}
+
+		</div>
+        
+        <div class="form-floating mt-2">
+            {{form.goals(class="form-control ",cols="40", rows="5")}}
+            {{form.goals.label(class="form-label")}}
+
+        </div>
+		
+
+		
+		{{form.submit(class="btn btn-primary btn-lg w-100 mt-3")}}
+	</form>
+</div>
+
+{% endblock %}

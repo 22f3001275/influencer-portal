@@ -1,0 +1,103 @@
+{% extends 'base.html'%} {% block title %}Campaign{% endblock %} {% block
+content %}
+<div class="progress" style="height: 3px">
+	<div
+		class="progress-bar bg-success"
+		role="progressbar"
+		style="width: {{progress}}%"
+		aria-valuenow="{{progress}}"
+		aria-valuemin="0"
+		aria-valuemax="100"
+	></div>
+</div>
+<div class="container">
+	<div class="card mt-4">
+		<div class="card-header bg-secondary">
+			<h2>{{campaign.name}}</h2>
+		</div>
+		<div class="card-body">
+			<h5 class="card-title">{{campaign.description}}</h5>
+			<div class="row">
+				<div class="col-12 col-md-6">
+					<p><strong>Start Date:</strong> {{campaign.start_date}}</p>
+					<p><strong>End Date:</strong> {{campaign.end_date}}</p>
+					<p><strong>Cost:</strong> {{campaign.cost}}</p>
+
+					<p><strong>Visibility:</strong> {{campaign.visibility}}</p>
+					<p><strong>Category:</strong> {{campaign.category}}</p>
+				</div>
+				<div class="col-12 col-md-6">
+					<strong>Goals: </strong><br />
+					<ul>
+						{% for goal in goals_list %}
+						<li>{{ goal }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr />
+	<div class="card mt-4">
+		<div class="card-header bg-secondary">
+			<h2>Progress</h2>
+		</div>
+		<div class="progress" style="height: 4px">
+			<div
+				class="progress-bar bg-success"
+				role="progressbar"
+				style="width: {{progress}}%"
+				aria-valuenow="{{progress}}"
+				aria-valuemin="0"
+				aria-valuemax="100"
+			></div>
+		</div>
+		<div class="card-body">
+			<table class="table table-striped" >
+				<thead class="text-center">
+					<tr>
+						<th>Checkpoint Name</th>
+						<th>Weight</th>
+						<th>Secret Key</th>
+					</tr>
+				</thead>
+				<tbody class="text-center">
+					{% for checkpoint in checkpoints %}
+					<tr>
+						<td>{{ checkpoint[0] }}</td>
+						<td>{{ checkpoint[1] }} %</td>
+						<td>{{ checkpoint[2] }}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			<div class="alert alert-danger">
+				<strong>Note: </strong>
+				<ol>
+					<li>
+				Please keep the secret keys safe. They are required to update the progress of the campaign.
+
+					</li>
+						<li>
+						Do not share the 'Finish' secret key until you are certain that the campaign has completed successfully.
+						</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+	<hr />
+	<div class="mt-4">
+		<h3>Active Ads</h3>
+		<div class="card mt-4">
+			{% for ad in active_ads %}
+			<div class="card-body">
+				<a href="{{url_for('view_ad', ad_id=ad.id)}}" class="card-link"
+					>{{ad.name}}</a
+				>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{% endblock %}

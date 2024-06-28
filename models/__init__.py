@@ -2,9 +2,10 @@ from app import bcrypt, login_manager
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from flask_login import UserMixin
-from typing import List
+from typing import List,Optional
 from db import session
 from db import engine
+from flask import flash,redirect
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -61,6 +62,21 @@ class User(Base, UserMixin):
     
     def is_password_correct(self,entered_password):
         return bcrypt.check_password_hash(self.password_hash,entered_password)
+
+    def add_balance(self, amount):
+        self.wallet += amount
+        session.commit()
+        flash(f'{amount:.2f} Added Successfully to you wallet', category='success')
+
+
+    def deduct_balance(self, amount):
+        if self.wallet < amount:
+            flash('Not Enough Balance. Kindly add to continue')
+            return redirect('recharge_wallet_page')
+        else:
+            self.wallet -= amount
+            session.commit()
+            flash(f'Transaction Complete. New Balance: {self.wallet:.2f}', category='success')
 
 
 class Sponsor(Base):
@@ -138,10 +154,10 @@ class Campaign(Base):
     campaign_requests: Mapped[List['CampaignRequest']] = relationship(
         back_populates='campaign')
 
-    sponsor_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    sponsor_id: Mapped[int] = mapped_column(ForeignKey('sponsors.id'))
 
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
-    decription: Mapped[str] = mapped_column(nullable=False, unique=True)
+    description: Mapped[str] = mapped_column(nullable=False, unique=True)
     start_date: Mapped[str] = mapped_column(
         nullable=False, default='01-01-2024')
     end_date: Mapped[str] = mapped_column(
@@ -157,9 +173,19 @@ class Campaign(Base):
     progress: Mapped[int] = mapped_column(nullable=False,default=0)
 
     # is_active:Mapped[bool] = mapped_column(nullable=False, default=False)
-    influencer_id:Mapped[int] = mapped_column(ForeignKey('influencers.id'))
-    assigned_to:Mapped['Influencer'] = relationship(
+    influencer_id:Mapped[Optional[int]] = mapped_column(ForeignKey('influencers.id'))
+    assigned_to:Mapped[Optional['Influencer']] = relationship(
         back_populates='active_campaigns')
+    
+
+    status: Mapped[str] = mapped_column(nullable=False, default='Incomplete')
+    secret_code: Mapped[str] = mapped_column(
+        nullable=False, default='')
+    checkpoint_weights: Mapped[str] = mapped_column(
+        nullable=False, default='')
+    spare:Mapped[int]=mapped_column(nullable=False,default=0)
+
+
 
 
 

@@ -6,13 +6,13 @@ from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationE
 class CompleteRegSponsor(FlaskForm):
 
     sponsor_type = SelectField('Are You', choices=[
-        ('individual', 'An Individual'),
-        ('company', 'A Company'),
+        ('Individual', 'An Individual'),
+        ('Company', 'A Company'),
 
     ])
     industry = SelectField('Select your Industry', choices=[
-        ('tech', 'Technology'),
-        ('others', 'Others'),
+        ('Technology', 'Technology'),
+        ('Others', 'Others'),
 
     ])
     submit = SubmitField('Complete Registration')

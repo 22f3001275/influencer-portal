@@ -1,9 +1,15 @@
 from app import app, login_manager
-from flask import render_template, flash, redirect, url_for
-from forms import RegisterForm, LoginForm, CompleteRegInf, CompleteRegSponsor
-from models import User, Sponsor, Influencer
+from flask import render_template, flash, redirect, url_for,request
+from forms import RegisterForm, LoginForm, CompleteRegInf, CompleteRegSponsor,MakeCampaign
+from models import User, Sponsor, Influencer,Campaign
 from db import session
 from flask_login import login_user, current_user, logout_user, login_required
+import re
+from helpers import generate_completion_codes,checkpoints
+
+
+
+
 
 
 @app.route('/')
@@ -63,7 +69,7 @@ def login_page():
             current_user.current_role = form.login_as.data
             return redirect(url_for('dashboard_page'))
         else:
-            flash(f'Username and Password do not Match', category=danger)
+            flash(f'Username and Password do not Match', category='danger')
 
     if form.errors != {}:
         for error in form.errors.values():
@@ -74,8 +80,82 @@ def login_page():
 @app.route('/dashboard')
 @login_required
 def dashboard_page():
-    
-    return render_template('dashboard.html',progress=80)
+
+    return render_template('dashboard.html', progress=80)
+
+
+@app.route('/add/campaign', methods=['GET', 'POST'])
+@login_required
+def add_campaign_page():
+    if current_user.is_sponsor:
+        form = MakeCampaign()
+        if form.validate_on_submit():
+            if current_user.wallet < form.cost.data:
+                flash(
+                    'Please Recharge! You do not have enough balance to create this campaign.', category='danger')
+                return redirect('recharge_wallet_page')
+            progress = generate_completion_codes(form.goals.data)
+            new_campaign = Campaign(
+                sponsor_id=current_user.sponsor.id,
+                name=form.name.data,
+                description=form.description.data,
+                start_date=form.start_date.data,
+                end_date=form.end_date.data,
+                cost=form.cost.data,
+                visibility=(form.visibility.data == 'public'),
+                goals=form.goals.data,
+                category=form.category.data,
+                status='Incomplete',
+                secret_code=progress['completion_keys'],
+                checkpoint_weights=progress['checkpoint_weight'],
+                spare=progress['spare'],
+
+            )
+            session.add(new_campaign)
+            session.commit()
+            current_user.deduct_balance(form.cost.data)
+            flash('Campaign Incomplete! Kindly add a Ad request',category='danger')
+            return redirect(url_for('view_campaign_page', campaign=new_campaign.id))
+
+        if form.errors != {}:
+            for error in form.errors.values():
+                flash(f'{error}', category='danger')
+        return render_template('/add/campaign.html', form=form)
+    else:
+        flash('OOPS! Become a Sponsor to start creating Campaigns', category='danger')
+        return redirect(url_for('dashboard_page'))
+
+
+@app.route('/view/campaign', methods=['GET', 'POST'])
+@login_required
+def view_campaign_page():
+    if current_user.is_sponsor:
+        campaign_id = request.args['campaign']
+        if campaign_id:
+            campaign = session.query(Campaign).get(campaign_id)
+            if campaign:
+                if campaign.sponsor_id == current_user.sponsor.id:
+                    goals_list = re.split(';', campaign.goals)
+                    goals_list = [re.split('=', goal)[0]
+                                  for goal in goals_list]
+                    checkpoints_list = checkpoints(
+                        campaign.goals, campaign.secret_code, campaign.checkpoint_weights, campaign.spare)
+                    return render_template('/view/campaign.html', campaign=campaign, goals_list=goals_list,progress =60,checkpoints=checkpoints_list)
+                else:
+                    flash('Not Your Campaign', category='info')
+                    return redirect(url_for('dashboard_page'))
+                
+            else:
+                flash('Campaign Not Found', category='info')
+                return redirect(url_for('dashboard_page'))
+            
+        else:
+            flash('Campaign ID Not Found', category='info')
+            return redirect(url_for('dashboard_page'))
+    else:
+        flash('OOPS! Become a Sponsor to start Campaigning', category='danger')
+        return redirect(url_for('dashboard_page'))
+
 
 
 @app.route('/influencer/complete_registration', methods=['GET', 'POST'])
