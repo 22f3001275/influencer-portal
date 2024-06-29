@@ -88,17 +88,23 @@ content %} {% if current_user.is_sponsor or current_user.is_influencer %}
 
 					<div class="col-12">
 						<h3 class="col-12">New Requests</h3>
-                        {% for campaign in current_user.influencer.ad_requests
+                        {% for ad_request in current_user.influencer.ad_requests
 					%}
                     {% if ad_request.status == 'Pending'%}
 						<div class="card">
-							<div class="card-header">{ad_request.campaign.name}</div>
+							<div class="card-header">{{ad_request.campaign.name}}</div>
 							<div class="card-body">
 								<h5 class="card-title">
-									{ad_request.message}
+									{{ad_request.messages}}
 								</h5>
 								<p class="card-text">
-									{ad_request.message}
+									<strong>Sponsor: </strong>{{ad_request.sponsor.user.name}}
+								</p>
+								<p class="card-text">
+									<strong>Payment Amount: </strong>{{ad_request.payment_amount}}
+								</p>
+								<p class="card-text">
+									{{ad_request.requirements}}
 								</p>
 								<a href="#" class="btn btn-info"
 									>More</a

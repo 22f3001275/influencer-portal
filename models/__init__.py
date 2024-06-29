@@ -66,7 +66,7 @@ class User(Base, UserMixin):
     def add_balance(self, amount):
         self.wallet += amount
         session.commit()
-        flash(f'{amount:.2f} Added Successfully to you wallet', category='success')
+        flash(f'₹ {amount:.2f} Added Successfully to you wallet. Available Balance: {self.wallet}', category='success')
 
 
     def deduct_balance(self, amount):
@@ -88,6 +88,9 @@ class Sponsor(Base):
         nullable=False, default='individual')
     industry: Mapped[str] = mapped_column(
         nullable=False, default='others')
+    
+    ad_requests: Mapped[List['AdRequest']] = relationship(
+        back_populates='sponsor')
     
 
 class Influencer(Base):
@@ -122,9 +125,12 @@ class AdRequest(Base):  # Sent by Sponsor
     influencer: Mapped['Influencer'] = relationship(
         back_populates='ad_requests')
     
+    sponsor_id: Mapped[int] = mapped_column(ForeignKey('sponsors.id'))
+    sponsor: Mapped['Sponsor'] = relationship(
+        back_populates='ad_requests')
 
     messages: Mapped[str] = mapped_column(nullable=False)
-    requirements: Mapped[str]
+    requirements: Mapped[str] = mapped_column(nullable=False, default='')
     payment_amount: Mapped[int] = mapped_column(nullable=False, default=0)
     status: Mapped[str] = mapped_column(nullable=False, default='Pending')
 
@@ -137,7 +143,7 @@ class CampaignRequest(Base):  # Sent by Influencer
     campaign: Mapped['Campaign'] = relationship(
         back_populates='campaign_requests')
 
-    influencer_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    influencer_id: Mapped[int] = mapped_column(ForeignKey('influencers.id'))
     messages: Mapped[str] = mapped_column(nullable=False)
     requirements: Mapped[str]
     payment_amount: Mapped[int] = mapped_column(nullable=False, default=0)
@@ -188,5 +194,5 @@ class Campaign(Base):
 
 
 
-
+session.rollback()
 Base.metadata.create_all(engine)

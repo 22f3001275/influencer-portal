@@ -4,8 +4,10 @@ import pyotp
 
 def generate_completion_codes(goals):
     goals_list = re.split(';', goals)
+    print(goals_list)
     total_weights = 0
     for goal in goals_list:
+        
         total_weights += int(re.split('=', goal)[1])
     print(total_weights)
     weight_for_100 = int(100/total_weights)
