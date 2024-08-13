@@ -1,0 +1,60 @@
+{% extends 'base.html'%} {% block title %}{{campaign.name}}{% endblock %} {% block content %}
+{% if campaign%}
+{%if campaign.visibility%}
+<div class="container">
+<div class="card mt-4">
+			<div class="card-header bg-secondary">
+				<div class="row">
+					<h2 class="col-12 col-md-8">{{campaign.name}}</h2>
+					{% if not current_user.currently_logged_in_as %}
+					<a
+						href="{{url_for('add_campaign_request_page',campaign= campaign.id)}}"
+						class="btn btn-info col-12 col-md-4 mr-4"
+						>Create Campaign Request</a
+					>
+					{% endif %}
+				</div>
+			</div>
+			<div class="card-body">
+				<h5 class="card-title">{{campaign.description}}</h5>
+				<div class="row">
+					<div class="col-12 col-md-6">
+						<p>
+							<strong>Start Date:</strong> {{campaign.start_date}}
+						</p>
+						<p><strong>End Date:</strong> {{campaign.end_date}}</p>
+						<p>
+							<strong>Agreed Cost:</strong> ₹
+							{{campaign.agreed_cost}}
+						</p>
+
+						<p>
+							<strong>Visibility:</strong> {{campaign.visibility}}
+						</p>
+						<p><strong>Category:</strong> {{campaign.category}}</p>
+					</div>
+					<div class="col-12 col-md-6">
+						<strong>Goals: </strong><br />
+						<ul>
+							{% for goal in goals_list %}
+							<li>{{ goal }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+</div>
+{%else%}
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+			<div class="alert alert-danger" role="alert">
+				This campaign is not visible to the public.
+			</div>
+		</div>
+	</div>
+</div>
+{%endif%}
+{% endif %}
+{% endblock %}

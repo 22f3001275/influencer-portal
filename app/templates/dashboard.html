@@ -1,148 +1,277 @@
 {% extends 'base.html'%} {% block title %}Dashboard{% endblock %} {% block
-content %} {% if current_user.is_sponsor or current_user.is_influencer %}
+content %} 
+{% if current_user.is_sponsor or current_user.is_influencer %}
 <div class="container mt-4">
-	<div id="admin"></div>
-
-	<div id="influencer">
-		<div class="row gx-md-5">
-			<div class="col-12 col-md-4">
-				<img
-					src="/static/img/profile.jpg"
-					alt="Profile Pic"
-					class="w-100 rounded rounded-circle"
-				/>
-				<h3 class="text-center mt-2">
-					<strong class="text-success">Username: </strong>
-					{{current_user.username}}
-				</h3>
-				<h3 class="text-center mt-2">
-					<strong class="text-success">Rating: </strong>
-					{{current_user.influencer.rating}}
-				</h3>
-				<h3 class="text-center mt-2">
-					<strong class="text-success">Total Earning: </strong>
-					{{current_user.earning}} $
-				</h3>
-				<h5 class="text-center mt-2">
-					<strong class="text-success">Completed Campaigns: </strong>
-					{{current_user.finished_campaigns}}
-				</h5>
-				<h5 class="text-center mt-2">
-					<strong class="text-success">Industry: </strong>
-					{{current_user.influencer.industry}}
-				</h5>
-				<h5 class="text-center mt-2">
-					<strong class="text-success">Reach: </strong>
-					{{current_user.influencer.reach}}
-				</h5>
-				<h5 class="text-center mt-2">
-					<strong class="text-success">Platform: </strong>
-					{{current_user.influencer.category}}
-				</h5>
-			</div>
-			<div class="col-12 col-md-8">
-				<div class="row">
-					<h2 class="col-12 col-md-8">
-						Welcome {{current_user.name}}
-					</h2>
-					<a class="col-12 col-md-4 text-success" href="#"
-						>Edit Profile</a
-					>
-				</div>
-				<hr />
-				<div class="">
-					<h3 class="col-12">Campaigns</h3>
-					{% for campaign in current_user.influencer.active_campaigns
-					%}
-					<div class="card mb-2">
-						<div class="card-header">
-							{{campaign.campaign_name}}
-						</div>
-						<div class="progress" style="height: 3px">
-							<div
-								class="progress-bar bg-success"
-								role="progressbar"
-								style="width: {{campaign.progress}}%"
-								aria-valuenow="{{campaign.progress}}"
-								aria-valuemin="0"
-								aria-valuemax="100"
-							></div>
-						</div>
-						<div class="card-body">
-							<p class="card-text">
-								<b>Brand:</b> {{campaign.sponsor.name}}
-							</p>
-							<p class="card-text"><b>Platform:</b> Twitter</p>
-							<p class="card-text">
-								<b>Payment:</b> $ {{campaign.earning}}
-							</p>
-							<p class="card-text">
-								<b>Progress:</b> {{campaign.progress}}%
-							</p>
-							<td>{{campaign.earning}}</td>
-							<td><a href="">View More</a></td>
-						</div>
+	{% if current_user.currently_logged_in_as %}
+		<div id="sponsor">
+			<div class="row gx-md-5">
+				<div class="col-12">
+					<div class="row">
+						<h2 class="col-12 col-md-8">
+							Welcome {{current_user.name}}
+						</h2>
+						<!-- <a class="col-12 col-md-4 text-success" href="#"
+							>Edit Profile</a
+						> -->
 					</div>
-					{%endfor%}
 					<hr />
+					<div class="">
+						<h3 class="col-12">Campaigns</h3>
+						{% for campaign in current_user.sponsor.campaigns
+						%}
 
-					<div class="col-12">
-						<h3 class="col-12">New Requests</h3>
-                        {% for ad_request in current_user.influencer.ad_requests
-					%}
-                    {% if ad_request.status == 'Pending'%}
-						<div class="card">
-							<div class="card-header">{{ad_request.campaign.name}}</div>
-							<div class="card-body">
-								<h5 class="card-title">
-									{{ad_request.messages}}
-								</h5>
-								<p class="card-text">
-									<strong>Sponsor: </strong>{{ad_request.sponsor.user.name}}
-								</p>
-								<p class="card-text">
-									<strong>Payment Amount: </strong>{{ad_request.payment_amount}}
-								</p>
-								<p class="card-text">
-									{{ad_request.requirements}}
-								</p>
-								<a href="#" class="btn btn-info"
-									>More</a
-								>
+						<div class="card mb-2">
+							<div class="card-header">
+								<h3>{{campaign.name}}</h3>
 							</div>
+							<div class="progress" style="height: 3px">
+								<div
+									class="progress-bar bg-success"
+									role="progressbar"
+									style="width: {{campaign.progress}}%"
+									aria-valuenow="{{campaign.progress}}"
+									aria-valuemin="0"
+									aria-valuemax="100"
+								></div>
+							</div>
+							<div class="card-body">
+								<p class="card-text">
+									<b>Brand:</b> {{campaign.sponsor.user.name}}
+								</p>
+								<p class="card-text"><b>Platform:</b> Twitter</p>
+								<p class="card-text">
+									<b>Payment:</b> $ {{campaign.earning}}
+								</p>
+								<p class="card-text">
+									<b>Progress:</b> {{campaign.progress}}%
+								</p>
+								<a href="{{url_for('view_campaign_page',campaign=campaign.id)}}" class="btn btn-warning">View More</a>
+							</div>
+						</div>
+						{%endfor%}
+						<hr />
+
+						<div class="col-12">
+							<h3 class="col-12">New Requests</h3>
+							
+							{% for campaign in current_user.sponsor.campaigns %}
+							
+							{% for campaign_request in campaign.campaign_requests %}
+						{% if campaign_request.status == 'Pending'%}
+
+						{%include 'includes/modal_campaign_request.html' %}
+							<div class="card">
+								<div class="card-header">{{campaign_request.campaign.name}}</div>
+								<div class="card-body">
+									<h5 class="card-title">
+										{{campaign_request.messages}}
+									</h5>
+									<p class="card-text">
+										<strong>Sponsor: </strong>{{campaign_request.influencer.user.name}}
+									</p>
+									<p class="card-text">
+										<strong>Payment Amount: </strong>{{campaign_request.payment_amount}}
+									</p>
+									<a href="#" class="btn btn-info"
+
+								data-bs-toggle="modal"
+								data-bs-target="#Modal-CampaignRequestConfirm-{{ campaign_request.id }}"
+
+										>More</a
+									>
+								</div>
+							</div>
+						</div>
+						{%endif%}
+						{%endfor%}
+						{%endfor%}
+						<!-- <hr>
+						<div class="col-12">
+							<h3 class="col-12">Your Requests</h3>
+
+							<div class="card">
+								<div class="card-header">Featured</div>
+								<div class="card-body">
+									<h5 class="card-title">
+										Special title treatment
+									</h5>
+									<p class="card-text">
+										With supporting text below as a natural
+										lead-in to additional content.
+									</p>
+									<a href="#" class="btn btn-primary"
+										>Go somewhere</a
+									>
+								</div>
+							</div>
+						</div> -->
+					</div>
+					<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+				</div>
+			</div>
+
+			<div id="sponsor"></div>
+		</div>
+		
+	{%else%}
+	
+		<div id="influencer">
+			<div class="row gx-md-5">
+				<div class="col-12 col-md-4">
+					{%include 'includes/modal_profile_pic.html' %}
+					<div class="position-relative">
+						<img
+						src="{{current_user.profile_pic}}"
+						alt="Profile Pic"
+						class="w-100 rounded rounded-circle btn hover_div"
+						data-bs-toggle="modal"
+						data-bs-target="#Modal-ProfilePic"
+
+						/>
+						<div class="hide position-absolute top-50 start-50 translate-middle">
+							<i class="fa-solid fa-arrow-up-from-bracket fa-2xl"></i>
 						</div>
 					</div>
-                    {%endif%}
-                    {%endfor%}
-                    <!-- <hr>
-					<div class="col-12">
-						<h3 class="col-12">Your Requests</h3>
-
-						<div class="card">
-							<div class="card-header">Featured</div>
+					
+					<h3 class="text-center mt-2">
+						<strong class="text-success">Username: </strong>
+						{{current_user.username}}
+					</h3>
+					<h3 class="text-center mt-2">
+						<strong class="text-success">Rating: </strong>
+						{{current_user.influencer.rating}}
+					</h3>
+					<h3 class="text-center mt-2">
+						<strong class="text-success">Total Earning: </strong>
+						 ₹ {{current_user.influencer.total_earning}} 
+					</h3>
+					<h5 class="text-center mt-2">
+						<strong class="text-success">Completed Campaigns: </strong>
+						{{current_user.influencer.finished_campaigns}}
+					</h5>
+					<h5 class="text-center mt-2">
+						<strong class="text-success">Industry: </strong>
+						{{current_user.influencer.niche}}
+					</h5>
+					<h5 class="text-center mt-2">
+						<strong class="text-success">Reach: </strong>
+						{{current_user.influencer.reach}}
+					</h5>
+					<h5 class="text-center mt-2">
+						<strong class="text-success">Platform: </strong>
+						{{current_user.influencer.category}}
+					</h5>
+				</div>
+				<div class="col-12 col-md-8">
+					<div class="row">
+						<h2 class="col-12 col-md-8">
+							Welcome {{current_user.name}}
+						</h2>
+						<!-- <a class="col-12 col-md-4 text-success" href="#"
+							>Edit Profile</a
+						> -->
+					</div>
+					<hr />
+					<div class="">
+						<h3 class="col-12">Campaigns</h3>
+						{% for campaign in current_user.influencer.active_campaigns
+						%}
+						<div class="card mb-2">
+							<div class="card-header">
+								{{campaign.name}}
+							</div>
+							<div class="progress" style="height: 3px">
+								<div
+									class="progress-bar bg-success"
+									role="progressbar"
+									style="width: {{campaign.progress}}%"
+									aria-valuenow="{{campaign.progress}}"
+									aria-valuemin="0"
+									aria-valuemax="100"
+								></div>
+							</div>
 							<div class="card-body">
-								<h5 class="card-title">
-									Special title treatment
-								</h5>
 								<p class="card-text">
-									With supporting text below as a natural
-									lead-in to additional content.
+									<b>Brand:</b> {{campaign.sponsor.user.name}}
 								</p>
-								<a href="#" class="btn btn-primary"
-									>Go somewhere</a
-								>
+								<p class="card-text"><b>Platform:</b> Twitter</p>
+								<p class="card-text">
+									<b>Payment:</b> $ {{campaign.cost}}
+								</p>
+								<p class="card-text">
+									<b>Progress:</b> {{campaign.progress}}%
+								</p>
+								<td>{{campaign.earning}}</td>
+								<td><a href="{{url_for('view_campaign_page',campaign=campaign.id)}}" class="btn btn-warning">View More</a></td>
 							</div>
 						</div>
-					</div> -->
+						{%endfor%}
+						<hr />
+
+						<div class="col-12">
+							<h3 class="col-12">New Requests</h3>
+							{% for ad_request in current_user.influencer.ad_requests
+						%}
+						{% if ad_request.status == 'Pending'%}
+
+						{%include 'includes/modal_ad_request.html' %}
+							<div class="card">
+								<div class="card-header">{{ad_request.campaign.name}}</div>
+								<div class="card-body">
+									<h5 class="card-title">
+										{{ad_request.messages}}
+									</h5>
+									<p class="card-text">
+										<strong>Sponsor: </strong>{{ad_request.sponsor.user.name}}
+									</p>
+									<p class="card-text">
+										<strong>Payment Amount: </strong>{{ad_request.payment_amount}}
+									</p>
+									<p class="card-text">
+										{{ad_request.requirements}}
+									</p>
+									<a href="#" class="btn btn-info"
+
+								data-bs-toggle="modal"
+								data-bs-target="#Modal-AdRequestConfirm-{{ ad_request.id }}"
+
+										>More</a
+									>
+								</div>
+							</div>
+						</div>
+						{%endif%}
+						{%endfor%}
+						<!-- <hr>
+						<div class="col-12">
+							<h3 class="col-12">Your Requests</h3>
+
+							<div class="card">
+								<div class="card-header">Featured</div>
+								<div class="card-body">
+									<h5 class="card-title">
+										Special title treatment
+									</h5>
+									<p class="card-text">
+										With supporting text below as a natural
+										lead-in to additional content.
+									</p>
+									<a href="#" class="btn btn-primary"
+										>Go somewhere</a
+									>
+								</div>
+							</div>
+						</div> -->
+					</div>
+					<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 				</div>
-				<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 			</div>
+
+			<div id="sponsor"></div>
 		</div>
+	{%endif%}
 
-		<div id="sponsor"></div>
-	</div>
-
-	{%else%}
+{%else%}
 
 	<div class="container">
 		<div class="row">
@@ -158,5 +287,18 @@ content %} {% if current_user.is_sponsor or current_user.is_influencer %}
 			</div>
 		</div>
 	</div>
-	{%endif%} {% endblock%}
+
+{%endif%} 
 </div>
+<style>
+	.hide {
+	display: none;
+	}
+
+	.hover_div:hover + .hide {
+	display: block;
+	color: red;
+	}
+</style>
+{% endblock%}
+

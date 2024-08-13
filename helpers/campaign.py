@@ -37,3 +37,24 @@ def checkpoints(goals, secret_key, checkpoint_weight, spare):
     checkpoints.append(['Finish', spare, keys[no_of_checkpoints]])
 
     return checkpoints
+
+
+def checkpoints_inf(goals, secret_key, checkpoint_weight, spare):
+    checkpoint_weight = re.split(';', checkpoint_weight)
+    no_of_checkpoints = len(checkpoint_weight)
+    goals_list = re.split(';', goals)
+    keys = re.split(';', secret_key)
+
+    checkpoints = [[re.split('=', goal)[0]] for goal in goals_list]
+    for i in range(no_of_checkpoints):
+        checkpoints[i].extend([i,checkpoint_weight[i], keys[i]])
+    checkpoints.append(['Finish',-1, spare, keys[no_of_checkpoints]])
+
+    return checkpoints
+
+def secret_list_generator(checkpoints_list):
+    result = ''
+    for checkpoint in checkpoints_list:
+        result=result+checkpoint[3]+';'
+    result = result[:-1]
+    return result

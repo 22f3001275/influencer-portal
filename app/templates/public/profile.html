@@ -1,0 +1,111 @@
+{% extends 'base.html'%} {% block title %}Profile: {{user.name}}{% endblock %}
+{% block content %}
+
+<div class="container">
+	<div class="card col-md-8 container" style="background-color: #6667ab">
+		<!-- <div class="card " style="background-color: #BE3455;"> -->
+		<div class="card-body">
+			<div class="row">
+				<div class="col-12 col-md-4 text-center">
+					<img
+						src="{{user.profile_pic}}"
+						alt=""
+						class="rounded-circle img-fluid"
+						style="width: 200px"
+					/>
+				</div>
+				<div class="col-12 col-md-8">
+					<p class="card-text mt-2">
+						{% if user.is_influencer %}
+						<span class="badge bg-primary">Influencer</span>
+						{% endif %} {% if user.is_sponsor %}
+						<span class="badge bg-success">Sponsor</span>
+						{% endif %}
+
+						{% if user.is_admin%}
+						<span class="badge bg-warning">Admin</span>
+						{% endif %}
+						{% if dt.datetime.strptime(user.banned_till,'%Y-%m-%d') > dt.datetime.now() %}
+						<span class="badge bg-danger">Banned</span>
+						{% endif %}
+					</p>
+					<h2>Name: {{user.name}}</h2>
+					<p>Username: {{user.username}}</p>
+					<p>Email: {{user.email_address}}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="card mt-4" style="background-color: #6667ab">
+		<!-- <div class="card mt-4 " style="background-color: #BE3455;"> -->
+		<div class="card-body">
+			<div class="row">
+				{% if user.is_influencer %}
+				<div class="col-12 col-md-6">
+					<p class="card-text mt-2">
+						<span class="badge bg-primary">Influencer Details</span>
+					</p>
+					<p class="card-text">
+						<strong>Category:</strong> {{ user.influencer.category
+						}}
+					</p>
+					<p class="card-text">
+						<strong>Niche:</strong> {{ user.influencer.niche }}
+					</p>
+					<p class="card-text">
+						<strong>Reach:</strong> {{ user.influencer.reach }}
+					</p>
+					<p class="card-text">
+						<strong>Campaign Completed:</strong> {{
+						user.influencer.finished_campaigns }}
+					</p>
+				</div>
+				{% endif %} {% if user.is_sponsor %}
+				<div class="col-12 col-md-6">
+					<p class="card-text mt-2">
+						<span class="badge bg-success">Sponsor Details</span>
+					</p>
+					<p class="card-text text-capitalize">
+						<strong>Sponsor Type:</strong> {{
+						user.sponsor.sponsor_type }}
+					</p>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+
+	{% if user.is_sponsor %}
+	<hr />
+	<div class="container mt-4">
+		<h3>Campaigns</h3>
+		{% for campaign in user.sponsor.campaigns %}
+		{% if campaign.visibility or current_user.is_admin %}
+		{% if campaign.status =='Incomplete' or campaign.status == 'Pending' %}
+		<div class="card mt-4">
+			<div class="card-body">
+				<h5>{{campaign.name}}</h5>
+				<p>{{campaign.description}}</p>
+				<p>Start Date: {{campaign.start_date}}</p>
+				<p>End Date: {{campaign.end_date}}</p>
+				<p>Category: {{campaign.category}}</p>
+				<p>Cost: ₹ {{campaign.cost}}</p>
+				<div class="container w-100 my-2">
+					<a
+						href="{{url_for('public_campaign_page',campaign_id=campaign.id)}}"
+						class="btn btn-info stretched-link w-100"
+						>More Info</a
+					>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+		{% endif %}
+
+		{% endfor %}
+	</div>
+	{% endif %}
+</div>
+
+{% endblock %}

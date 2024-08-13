@@ -1,0 +1,43 @@
+{% extends '/admin/base.html'%} {% block title %}Redeem{% endblock %} {% block content %}
+<div class="container">
+    <h3>Redeem Requests</h3>
+    <hr>
+    {% for redeem_request in redeem_requests%}
+    {% include 'admin/modal_redeem.html' %}
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="card-text">
+				<div class="d-flex align-items-center">
+					<img
+						src="{{ redeem_request.user.profile_pic }}"
+						class="rounded-circle me-3"
+						width="50"
+						height="50"
+						alt="Profile Picture"
+					/>
+					<h6 class="card-title">{{ redeem_request.user.name }}</h6>
+				</div>
+			</div>
+            <p>
+                <strong>Amount: </strong>{{redeem_request.payment_amount}}
+            </p>
+            <p>
+                <strong>UPI: </strong>{{redeem_request.upi_id}}
+            </p>
+            <p>
+                <strong>Timestamp: </strong>{{redeem_request.timestamp}}
+            </p>
+            <p>
+                <strong>Status: </strong>{{redeem_request.status}}
+            </p>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#Modal-Redeem-{{redeem_request.id}}">
+                Change Status
+            </button>
+            </div>
+
+
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

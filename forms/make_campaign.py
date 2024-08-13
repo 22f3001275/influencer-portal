@@ -12,7 +12,10 @@ class MakeCampaign(FlaskForm):
     #     if total_weights>100:
     #         raise ValidationError(
     #             '')
-
+    # def validate_end_date(self, end_date):
+    #     if end_date.data<self.start_date.data:
+    #         raise ValidationError('End date can not be less than start date')
+        
     name = StringField(label='Name Your Campaign', validators=[
                            Length(min=4, max=30), DataRequired()])
     description = StringField(label='Describe Your Campaign', validators=[

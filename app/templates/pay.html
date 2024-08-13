@@ -14,7 +14,7 @@ var options = {
     "currency": "INR",
     "name": "Suyash Mishra",
     "description": "Add Money to Wallet",
-    "image": "https://suyashmishra.com/profile.jpeg",
+    "image": "https://suyashmishra.com/img/profile_sq.png",
     "order_id": "{{data.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     // "callback_url": window.location.host+"/complete/payment/",
     "callback_url": "{{url_for('complete_payment')}}",
@@ -25,9 +25,9 @@ var options = {
     "notes": {
         "address": "Razorpay Corporate Office"
     },
-    // "theme": {
-    //     "color": "#3399cc"
-    // }
+    "theme": {
+        "color": "#3399cc"
+    }
 };
 var rzp1 = new Razorpay(options);
 document.getElementById('rzp-button1').onclick = function(e){

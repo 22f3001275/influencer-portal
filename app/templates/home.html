@@ -1,1 +1,47 @@
 {% extends 'base.html'%}
+{% block title %}Home | Influencer Portal {% endblock %}
+{% block content %}
+<main>
+    <div class="container py-4">
+
+        <div class="p-5 mb-4  border rounded-3">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">Welcome to the Influencer Platform!</h1>
+                <p class="col-md-8 fs-8">Are you a sponsor looking to elevate your brand through powerful influencer partnerships? Or are you an influencer
+                aiming to monetize your social media presence by collaborating with top-tier brands? Look no further! Our platform
+                seamlessly connects sponsors and influencers, creating a win-win scenario for both parties.</p>
+                <a href="{{url_for('register_page')}}" class="btn btn-primary btn-lg" type="button">Register</a>
+            </div>
+        </div>
+
+        <div class="row align-items-md-stretch">
+            <div class="col-md-6 mt-2">
+                <div class="h-100 p-5 text-white bg-dark border rounded-3">
+                    <h2>Why Choose Us?</h2>
+                    <p>
+                        <ul><li>Easy Connections: Effortlessly connect with the right influencers or sponsors tailored to your needs and preferences.</li>
+                    <li>Efficient Campaign Management: Streamline the process of creating, managing, and tracking campaigns and ad requests.</li>
+                    <li> Transparent: Enjoy a secure environment with clear, transparent terms and conditions for every collaboration.</li>
+                </ul></p>
+                </div>
+            </div>
+            <div class="col-md-6 mt-2">
+                <div class="h-100 p-5 bg-dark border rounded-3">
+                    <h2>Get Started</h2>
+                    <p>
+                    <ul>
+                        <li>Join us today to revolutionize your advertising strategies or take your influencing career to the next level. Create an
+                        account, explore our features, and start connecting with like-minded professionals in no time!</li>
+                        <li>Sign Up Now to experience the future of influencer marketing and sponsorship coordination.</p></li>
+                    </ul>    
+                    <a href="{{url_for('register_page')}}" class="btn btn-outline border" type="button">Sign UP</a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="pt-3 mt-4 text-muted border-top">
+            &copy; 2024 Influencer Portal | Suyash Mishra
+        </footer>
+    </div>
+</main>
+    {% endblock %}

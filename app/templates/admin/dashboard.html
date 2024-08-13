@@ -1,0 +1,258 @@
+{% extends '/admin/base.html'%} {% block title %}Admin Dashboard{% endblock %} {% block
+content %}
+
+    {% include 'admin/modal_ban.html' %}
+<div class="container px-4">
+	<h1>Dashboard</h1>
+	<p>Welcome to the admin dashboard</p>
+    <div class="row gx-5">
+        <div class="col col-12 col-lg-4 mt-2">
+            <div class="card p-2 h-100">
+            <div class="row text-center text-md-start d-flex align-items-center">
+                <div class="col-md-4 text-center">
+                        <i class="d-flex align-items-center fas fa-users fa-5x mt-2 text-primary"></i>
+                </div>
+                <div class="col-md-8">
+                    <p>User Count: {{data.user_metrics.user_cnt}}</p>
+                    <p>Banned Users: {{data.user_metrics.banned_users}}</p>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="col col-12 col-lg-4 mt-2">
+            <div class="card p-2 h-100">
+            <div class="row text-center text-md-start ">
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-solid fa-chart-bar fa-5x mt-2 text-success"></i>
+                </div>
+                <div class="col-md-8">
+                    <h5>Redeem Requests: {{data.redeem_request}}</h5>
+                    <p>Sponsor Count: {{data.user_metrics.sponsor_cnt }}</p>
+                    <p>Influencer Count: {{data.user_metrics.influencer_cnt }}</p>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="col col-12 col-lg-4 mt-2">
+            <div class="card p-2 h-100">
+            <div class="row text-center text-md-start">
+                <div class="col-md-4 text-center">
+                        <i class="fas fa-solid fa-chart-simple fa-5x mt-2 text-warning"></i>
+                </div>
+                <div class="col-md-8">
+                    <p>Campaign Count: {{data.campaign_metrics.campaign_cnt}}</p>
+                    <p>Ad Request Count: {{data.request_metrics.ad_request_count }}</p>
+                    <p>Campaign Request Count: {{data.request_metrics.campaign_request_count }}</p>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-12 col-lg-3 mt-2">
+            <div class="card p-2">
+                <canvas id="sponsor_influencer_ratio"></canvas>
+            </div>
+        </div>
+        <div class="col col-12 col-lg-3 mt-2">
+            <div class="card p-2">
+                <canvas id="public_private_count"></canvas>
+            </div>
+        </div>
+        <div class="col col-12 col-lg-3 mt-2">
+            <div class="card p-2">
+                <canvas id="category_count"></canvas>
+            </div>
+        </div>
+        <div class="col col-12 col-lg-3 mt-2">
+            <div class="card p-2 h-100">
+                <canvas id="request_data"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-12 col-lg-6">
+            <div class="card p-2 h-100">
+                <canvas id="category_avg"></canvas>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://raw.githubusercontent.com/google/palette.js/master/palette.js"></script>
+
+<script>
+    var ctx = document.getElementById('sponsor_influencer_ratio').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Sponsors', 'Influencers'],
+            datasets: [{
+                label: 'User Type',
+                data: [{{data.user_metrics.sponsor_cnt}}, {{data.user_metrics.influencer_cnt}}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+            title: {
+                display: true,
+                text: 'Sponsors vs Influencers'
+            }
+        }
+        }
+    });
+
+    var ctx = document.getElementById('public_private_count').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Public', 'Private'],
+            datasets: [{
+                label: 'Campaign Type',
+                data: [{{data.campaign_metrics.public_cnt}}, {{data.campaign_metrics.campaign_cnt-data.campaign_metrics.public_cnt}}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+            title: {
+                display: true,
+                text: 'Public vs Private Campaigns'
+            }
+        }
+        }
+    });
+
+    var ctx = document.getElementById('category_count').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: {{data.campaign_metrics.category_cnt_label|safe}},
+            datasets: [{
+                label: 'Category Count',
+                data: {{data.campaign_metrics.category_cnt_data|safe}},
+                backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 205, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(201, 203, 207, 0.2)'
+                ],
+                borderColor: [
+                'rgb(255, 99, 132)',
+                'rgb(255, 159, 64)',
+                'rgb(255, 205, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(54, 162, 235)',
+                'rgb(153, 102, 255)',
+                'rgb(201, 203, 207)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+            title: {
+                display: true,
+                text: 'Category Campaign Count'
+            }
+        }
+        }
+    });
+
+    var ctx = document.getElementById('category_avg').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{data.campaign_metrics.category_avg_label|safe}},
+            datasets: [{
+                label: 'Category Average',
+                data: {{data.campaign_metrics.category_avg_data|safe}},
+                backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 205, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(201, 203, 207, 0.2)'
+                ],
+                borderColor: [
+                'rgb(255, 99, 132)',
+                'rgb(255, 159, 64)',
+                'rgb(255, 205, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(54, 162, 235)',
+                'rgb(153, 102, 255)',
+                'rgb(201, 203, 207)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    var ctx = document.getElementById('request_data').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Ad Request', 'Campaign Request'],
+            datasets: [{
+                label: 'Request Count',
+                data: [{{data.request_metrics.ad_request_count}}, {{data.request_metrics.campaign_request_count}}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+            title: {
+                display: true,
+                text: 'Ad Request vs Campaign Request'
+            }
+        }
+        }
+    });
+
+</script>
+
+{% endblock %}

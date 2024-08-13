@@ -1,0 +1,61 @@
+<!-- <style>
+  .modal-content {
+    background-color: #212121
+  }
+</style> -->
+
+
+<div class="modal fade" id="Modal-CampaignRequestConfirm-{{campaign_request.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div>
+            <h4>About Ad Request</h4>
+				<div class="col-12">
+					<p>
+                    <p>
+                        <strong>Messages: </strong>
+                        {{campaign_request.messages}}
+                    </p>
+                    <p>
+                        <strong>Offered Price: </strong>
+                        ₹ {{campaign_request.payment_amount}}
+                    </p>
+				</div>
+
+        </div>
+        <div>
+            <h4>About Campaign</h4>
+				<div class="col-12">
+					<p><strong>Start Date:</strong> {{campaign_request.campaign.start_date}}</p>
+					<p><strong>End Date:</strong> {{campaign_request.campaign.end_date}}</p>
+					<p><strong>Cost:</strong> ₹ {{campaign_request.campaign.cost}}</p>
+
+					<p><strong>Visibility:</strong> {{campaign_request.campaign.visibility}}</p>
+					<p><strong>Category:</strong> {{campaign_request.campaign.category}}</p>
+				</div>
+
+        </div>
+
+        <form action="" method="post" class="text-center">
+          {{ form.hidden_tag() }}
+          <div class="form-floating">
+			{{form.choice(class="form-control" )}}
+			{{form.choice.label(class="form-label")}}
+        </div>
+          <br>
+          <input id="campaign_request" name="campaign_request" type="hidden" value="{{campaign_request.id}}">
+          {{ form.submit(class="btn btn-outline-danger btn-block w-100") }}
+        </form>
+      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Yes</button>
+      </div> -->
+    </div>
+  </div>
+</div>

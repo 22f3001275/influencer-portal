@@ -1,0 +1,134 @@
+{% extends 'base.html'%} {% block title %}Find{% endblock %} {% block content %}
+<div class="container">
+	<form class="row" method="POST">
+		{{form.hidden_tag()}}
+		<div class="form-group mt-2 col-12 col-md-6">
+			{{form.query(class="form-control ", placeholder="Search",
+			aria_label="Search")}}
+		</div>
+		<div class="form-group mt-2 col-12 col-md-3">
+			{{form.choice(class="form-select col-12 col-md-6")}}
+		</div>
+		<div class="form-group mt-2 col-12 col-md-3">
+			{{form.submit(class="btn btn-outline-success w-100")}}
+		</div>
+	</form>
+
+	{%if data_type==1%} {% if data|length==0 %}
+	<div class="alert alert-danger mt-4" role="alert">
+		No User found. Please try again.
+	</div>
+	{% endif %}
+	<!-- user -->
+	{%for user in data%}
+	<div class="card mt-4">
+		<div class="card-body">
+			<div class="d-flex align-items-center">
+				<img
+					src="{{ user.profile_pic }}"
+					class="rounded-circle me-3"
+					width="50"
+					height="50"
+					alt="Profile Picture"
+				/>
+				<h5 class="card-title">{{ user.username }}</h5>
+			</div>
+			<p class="card-text mt-2">
+				{% if user.is_influencer %}
+				<span class="badge bg-primary">Influencer</span>
+				{% endif %} 
+				{% if user.is_sponsor %}
+				<span class="badge bg-success">Sponsor</span>
+				{% endif %}
+
+				
+				{% if user.is_admin%}
+				<span class="badge bg-warning">Admin</span>
+				{% endif %}
+				{% if dt.datetime.strptime(user.banned_till,'%Y-%m-%d') > dt.datetime.now() %}
+				<span class="badge bg-danger">Banned</span>
+				{% endif %}
+			</p>
+			<p class="card-text"><strong>Full Name:</strong> {{ user.name }}</p>
+			<p class="card-text">
+				<strong>Email:</strong> {{ user.email_address }}
+			</p>
+			<div class="row">
+				{% if user.is_influencer %}
+				<div class="col-12 col-md-6">
+					<h5 class="fw-bolder">Influencer Details</h5>
+					<p class="card-text">
+						<strong>Category:</strong> {{ user.influencer.category
+						}}
+					</p>
+					<p class="card-text">
+						<strong>Niche:</strong> {{ user.influencer.niche }}
+					</p>
+					<p class="card-text">
+						<strong>Reach:</strong> {{ user.influencer.reach }}
+					</p>
+					<p class="card-text">
+						<strong>Campaign Completed:</strong> {{
+						user.influencer.finished_campaigns }}
+					</p>
+				</div>
+				{% endif %} {% if user.is_sponsor %}
+				<div class="col-12 col-md-6">
+					<h5 class="fw-bolder">Sponsor Details</h5>
+					<p class="card-text text-capitalize">
+						<strong>Sponsor Type:</strong> {{
+						user.sponsor.sponsor_type }}
+					</p>
+				</div>
+				{% endif %}
+			</div>
+            <div class="container w-100 my-2">
+
+                <a href="{{url_for('public_profile_page',user_id=user.id)}}" class="btn btn-info stretched-link w-100">Profile Page</a>
+            </div>
+		</div>
+	</div>
+
+        
+	{%endfor%} {%elif data_type==2%}
+
+	<!-- campaign -->
+	{%for campaign in data%}
+	<div class="card mt-4 ">
+		<div class="card-body">
+			<h5>{{campaign.name}}</h5>
+			<p>{{campaign.description}}</p>
+			<p><strong>Cost: </strong>₹ {{campaign.cost}}</p>
+			<p>
+				<strong>Niche: </strong>{{campaign.category}}
+			</p>
+			<div class="card-text">
+				<h5 class="fw-bolder">Sponsor</h5>
+				<div class="d-flex align-items-center">
+					<img
+						src="{{ campaign.sponsor.user.profile_pic }}"
+						class="rounded-circle me-3"
+						width="50"
+						height="50"
+						alt="Profile Picture"
+					/>
+					<h6 class="card-title">{{ campaign.sponsor.user.name }}</h6>
+				</div>
+			</div>
+		</div>
+        <div class="container w-100 my-2">
+
+        <a href="{{url_for('public_campaign_page',campaign_id=campaign.id)}}" class="btn btn-info stretched-link w-100">More Info</a>
+        </div>
+	</div>
+	{% endfor%} {%if data|length==0%}
+	<div class="alert alert-danger mt-4" role="alert">
+		No Campaign found. Please try again.
+	</div>
+	{%endif%} {%elif data_type==3%}
+	<div class="alert alert-danger mt-4" role="alert">
+		Invalid query. Please try again.
+	</div>
+
+	{%endif%} {% endblock %}
+</div>

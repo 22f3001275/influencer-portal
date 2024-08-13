@@ -9,9 +9,13 @@ class MakeAdRequest(FlaskForm):
     def validate_inf_username(self, inf_username):
         user = session.query(User).filter_by(
             username=inf_username.data).first()
+        
         if not user:
             raise ValidationError(
                 'Username does not exists! Please try a different username')
+        elif not user.is_influencer:
+            raise ValidationError(
+                'User is not an influencer')
 
     inf_username = StringField(label='Influencer Username', validators=[
         Length(min=4, max=30), DataRequired()])
